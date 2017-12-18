@@ -44,15 +44,28 @@ public class KnotHash {
         int[] myArray = new int[256];
         for (int i = 0; i < 256; i++) myArray[i] = i;
         String input = "88,88,211,106,141,1,78,254,2,111,77,255,90,0,54,205";
-//        String input = "AoC 2017";
+        String toRet = hexValue(input, myArray);
+        System.out.println(toRet);
+    }
+
+    public static String knotHash(String input) {
+        int[] myArray = new int[256];
+        for (int i = 0; i < 256; i++) myArray[i] = i;
+        return hexValue(input, myArray);
+    }
+
+    private static String hexValue(String input, int[] myArray) {
         knotHash(myArray, input);
 
         int[] denseHash = getDenseHash(myArray);
         String toRet = "";
         for (int i = 0; i < denseHash.length; i++) {
-            toRet = toRet + (Integer.toHexString(denseHash[i]));
+            String hexChar = Integer.toHexString(denseHash[i]);
+            if (hexChar.length() < 2) hexChar = "0".concat(hexChar);
+            toRet = toRet + hexChar;
         }
-        System.out.println(toRet);
+//        while (toRet.length() < 32) toRet = "0".concat(toRet);
+        return toRet;
     }
 
     private static int[] getDenseHash(int[] myArray) {
