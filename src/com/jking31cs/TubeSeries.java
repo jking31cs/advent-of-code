@@ -18,7 +18,7 @@ public class TubeSeries {
         return toRet;
     }
 
-    public static String traverse(List<String> graph) {
+    public static int traverse(List<String> graph) {
         int curRow = 0;
         int curCol = 0;
         int rowDir = 1;
@@ -31,26 +31,73 @@ public class TubeSeries {
             }
         }
         String toRet = "";
+        int count = 0;
         while (inbounds(graph, curRow, curCol)) {
             if (isMovingVert) {
                 int newRow = curRow + rowDir;
-                if (!inbounds(graph, newRow, curCol)) break;
+                if (!inbounds(graph, newRow, curCol)) {
+                    break;
+                }
                 curRow += rowDir;
                 char c = graph.get(curRow).charAt(curCol);
                 if (alphas.contains(c)) {
                     toRet = toRet.concat(Character.toString(c));
                 }
+
+                count+=1;
+                if (c == ' ') break;
                 if (c == '+') {
                     isMovingVert = !isMovingVert;
+                    //Calculate direction.
+                    char neighborRight = ' ';
+                    if (curCol+1 < graph.get(curRow).length()) {
+                        neighborRight = graph.get(curRow).charAt(curCol + 1);
+                    }
+                    if (neighborRight == '-' || alphas.contains(neighborRight)) {
+                        colDir = 1;
+                    } else {
+                        colDir = -1;
+                    }
+                }
+            } else {
+                int newCol = curCol + colDir;
+                if (!inbounds(graph, curRow, newCol)) {
+                    break;
+                }
+                curCol += colDir;
+                char c = graph.get(curRow).charAt(curCol);
+                if (alphas.contains(c)) {
+                    toRet = toRet.concat(Character.toString(c));
+                }
+
+                count+=1;
+                if (c == ' ') break;
+                if (c == '+') {
+                    isMovingVert = !isMovingVert;
+                    //Calculate direction.
+                    char neighborBelow = ' ';
+                    if (curRow+1 < graph.size()) {
+                        neighborBelow =
+                                graph.get(curRow + 1).charAt(curCol);
+                    }
+                    if (neighborBelow == '|' || alphas.contains(neighborBelow)) {
+                        rowDir = 1;
+                    } else {
+                        rowDir = -1;
+                    }
                 }
             }
         }
-        return toRet;
+        return count;
     }
 
     private static boolean inbounds(List<String> graph, int curRow, int curCol) {
         if (curRow >= graph.size() || curRow < 0) return false;
         if (curCol >= graph.get(curRow).length() || curCol < 0) return false;
         return true;
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        System.out.println(traverse(parseFile(new File("day19input.txt"))));
     }
 }
